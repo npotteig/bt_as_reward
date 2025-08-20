@@ -1,0 +1,32 @@
+[project]
+name = "bt-as-reward"
+dynamic = ["version"]  # Let hatchling handle version
+description = "Behavior Trees as Rewards in Reinforcement Learning"
+readme = "README.md"
+authors = [
+    { name = "Nicholas Potteiger", email = "nicholas.potteiger@vanderbilt.edu" }
+]
+requires-python = ">=3.11"
+dependencies = [
+    "minigrid>=3.0.0",
+]
+
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[dependency-groups]
+dev = [
+    "black>=25.1.0",
+    "mypy>=1.17.1",
+    "pytest>=8.4.1",
+    "ruff>=0.12.9",
+]
+
+# Hatchling configuration
+[tool.hatch.version]
+path = "bt_as_reward/__init__.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["bt_as_reward"]
