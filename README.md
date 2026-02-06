@@ -124,7 +124,7 @@ Runs training runs with 4 random seeds in both deterministic and stochastic dyna
 **Training**
 ```bash
 bash bash_scripts/doorkey/z3_run_exps.sh
-bash bash_scripts/{task_space}/run_exps.sh
+bash bash_scripts/{task_space}/z3_run_exps.sh
 ```
 
 **Plotting**
