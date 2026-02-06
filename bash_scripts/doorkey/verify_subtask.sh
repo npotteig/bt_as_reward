@@ -11,6 +11,6 @@ uv run bt_as_reward/scripts/verify_llm_subtask.py \
     --function_file "llm_functions/doorkey/subtask_functions_gpt5.py" \
     --expert_trajs "trajs/doorkey/expert.npz" \
     --random_trajs "trajs/doorkey/random.npz" \
-    --verifier DoorKeyVerifier \
+    --verifier MiniGrid \
     --output_file "llm_functions/doorkey/response_$function_name.md" \
     --random_threshold 0.5 \

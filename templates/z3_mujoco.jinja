@@ -1,0 +1,28 @@
+#!/bin/bash
+# Usage: ./train.sh <reward_mode>
+
+reward_mode=$1
+seed=$2
+grip_fail=$3
+action_mask_file="${4:-none}"
+if [ -z "$reward_mode" ]; then
+    echo "Usage: $0 <reward_mode>"
+    exit 1
+fi
+
+uv run bt_as_reward/training/mujoco_train.py \
+    --seed $seed \
+    --max_mission_words {{ max_mission_words }} \
+    --grip_fail $grip_fail \
+    --num_timesteps {{ num_timesteps }} \
+    --reward_mode "$reward_mode" \
+    --env_name {{ env_name }} \
+    --object_function_file {{ object_function_file }} \
+    --object_function_names {{ object_function_names }} \
+    --subtask_function_file {{ subtask_function_file }} \
+    --subtask_names {{ subtask_names }} \
+    --subtask_function_names {{ subtask_function_names }} \
+    --distance_threshold 0.05 \
+    --action_mask_file "$action_mask_file" \
+    --use_z3 \
+    

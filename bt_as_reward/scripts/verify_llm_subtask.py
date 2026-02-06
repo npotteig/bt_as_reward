@@ -1,23 +1,9 @@
 import argparse
-import importlib.util
-from bt_as_reward.verifiers.verifier import VerifyOutput
-from bt_as_reward.verifiers.doorkey import DoorKeyVerifier
+from bt_as_reward.verifiers.verifier import SubtaskVerifyOutput, SubtaskZ3Output
+from bt_as_reward.verifiers.minigrid_verifier import MiniGridSubtaskVerifier, MiniGridSubtaskZ3Verifier
+from bt_as_reward.verifiers.mujoco_verifier import MuJoCoSubtaskVerifier, MuJoCoSubtaskZ3Verifier
 import numpy as np
-
-
-def load_function_from_file(file_path, function_name):
-    """
-    Dynamically load a function from a specified file path.
-
-    :param file_path: Path to the Python file containing the function.
-    :param function_name: Name of the function to load.
-    :return: The loaded function or None if not found.
-    """
-    spec = importlib.util.spec_from_file_location("module.name", file_path)
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-
-    return getattr(module, function_name, None)
+from bt_as_reward.utils import load_functions_from_file
 
 
 if __name__ == "__main__":
@@ -35,15 +21,28 @@ if __name__ == "__main__":
         help="Name of the subtask function to verify.",
     )
     parser.add_argument(
+        "--use_z3",
+        action="store_true",
+        help="Whether to use Z3 for verification.",
+    )
+    parser.add_argument(
+        "--env_name",
+        type=str,
+        required=False,
+        help="Name of the environment for Z3 verification.",
+    )
+    parser.add_argument(
         "--expert_trajs",
         type=str,
-        required=True,
+        required=False,
+        default=None,
         help="Path to the expert trajectories npz file.",
     )
     parser.add_argument(
         "--random_trajs",
         type=str,
-        required=True,
+        required=False,
+        default=None,
         help="Path to the random trajectories npz file.",
     )
     parser.add_argument(
@@ -55,8 +54,8 @@ if __name__ == "__main__":
     parser.add_argument(
         "--verifier",
         type=str,
-        default="DoorKeyVerifier",
-        help="Name of the verifier class to use.",
+        default="MiniGrid",
+        help="Name of the verifier to use.",
     )
     parser.add_argument(
         "--random_threshold",
@@ -66,42 +65,106 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
 
-    subtask_function = load_function_from_file(args.function_file, args.function_name)
-    if subtask_function is None:
-        print(f"Function {args.function_name} not found in {args.function_file}.")
-        exit(1)
+    subtask_function = load_functions_from_file(
+        args.function_file, [args.function_name]
+    )[0]
+    
+    if not args.use_z3:
 
-    match args.verifier:
-        case "DoorKeyVerifier":
-            verifier = DoorKeyVerifier()
-        # Add more verifiers as needed
-        case _:
-            print(f"Verifier {args.verifier} not recognized.")
+        match args.verifier:
+            case "MiniGrid":
+                verifier = MiniGridSubtaskVerifier
+            case "MuJoCo":
+                verifier = MuJoCoSubtaskVerifier
+            # Add more verifiers as needed
+            case _:
+                print(f"Verifier {args.verifier} not recognized.")
 
-    # Load expert and random trajectories
-    expert_trajs = np.load(args.expert_trajs, allow_pickle=True)
-    random_trajs = np.load(args.random_trajs, allow_pickle=True)
+        # Load expert and random trajectories
+        expert_trajs = np.load(args.expert_trajs, allow_pickle=True)
+        random_trajs = np.load(args.random_trajs, allow_pickle=True)
 
-    verify_output: VerifyOutput = verifier.verify(
-        subtask_function=subtask_function,
-        expert_trajs=expert_trajs,
-        random_trajs=random_trajs,
-        random_threshold=args.random_threshold,
-    )
+        verify_output: SubtaskVerifyOutput = verifier.verify(
+            subtask_function=subtask_function,
+            expert_trajs=expert_trajs,
+            random_trajs=random_trajs,
+            random_threshold=args.random_threshold,
+        )
 
-    # Save the verification output
-    with open(args.output_file, "w") as f:
-        f.write("# Description:\n")
-        f.write(
-            f"This file contains the verification results for the subtask function {args.function_name}.\n"
+        # Save the verification output
+        with open(args.output_file, "w") as f:
+            f.write("# Description:\n")
+            f.write(
+                f"This file contains the verification results for the subtask function {args.function_name}.\n"
+            )
+            f.write(
+                "Use only one prompt from the file when re-prompting, selecting it based on the given priority order: reactive, expert, then random.\n"
+            )
+            f.write(
+                f"## Reactive Response:\n{verify_output.reactive_response if verify_output.reactive_response is not None else 'Success'}\n"
+            )
+            f.write(
+                f"## Expert Response:\n{verify_output.expert_response if verify_output.expert_response is not None else 'Success'}\n"
+            )
+            f.write(
+                f"## Random Response:\n{verify_output.random_response if verify_output.random_response is not None else 'Success'}\n"
+            )
+    else:
+        match args.verifier:
+            case "MiniGrid":
+                verifier = MiniGridSubtaskZ3Verifier
+            case "MuJoCo":
+                verifier = MuJoCoSubtaskZ3Verifier
+            # Add more verifiers as needed
+            case _:
+                print(f"Verifier {args.verifier} not recognized.")
+        match args.env_name:
+            case "MiniGrid-DoorKey-6x6-v0":
+                mission_args = {
+                    "num_mission_keys": 1,
+                    "num_mission_doors": 1,
+                    "num_mission_boxes": 0,
+                }
+            case "MiniGrid-LockedRoom-v0":
+                mission_args = {
+                    "num_mission_keys": 1,
+                    "num_mission_doors": 2,
+                    "num_mission_boxes": 0,
+                }
+            case "DroneSupplier-v0":
+                mission_args = {
+                    "num_mission_keys": 1,
+                    "num_mission_doors": 1,
+                    "num_mission_boxes": 1,
+                }
+            case _: # MuJoCo
+                mission_args = {
+                    "num_mission_goals": 1
+                }
+        if args.expert_trajs:
+            expert_trajs = np.load(args.expert_trajs, allow_pickle=True)
+        if args.random_trajs:
+            random_trajs = np.load(args.random_trajs, allow_pickle=True)
+        verify_output: SubtaskZ3Output = verifier.verify(
+            subtask_function=subtask_function,
+            env_name=args.env_name,
+            mission_args=mission_args,
+            random_trajs=random_trajs if args.random_trajs else None,
+            expert_trajs=expert_trajs if args.expert_trajs else None,
         )
-        f.write(
-            "Use only one prompt from the file when re-prompting, selecting it based on the given priority order: expert non-reactive, then random, then expert reactive.\n"
-        )
-        f.write(
-            f"## Expert Non-Reactive Response:\n{verify_output.expert_nonreactive_response}\n"
-        )
-        f.write(f"## Random Response:\n{verify_output.random_response}\n")
-        f.write(
-            f"## Expert Reactive Response:\n{verify_output.expert_reactive_response}\n"
-        )
+
+        # Save the verification output
+        with open(args.output_file, "w") as f:
+            f.write("# Description:\n")
+            f.write(
+                f"This file contains the Z3 verification results for the subtask function {args.function_name}.\n"
+            )
+            f.write(
+                "Use only one prompt from the file when re-prompting, selecting it based on the given priority order: reactive, then subtask correctness.\n"
+            )
+            f.write(
+                f"## Positive Check Response:\n{verify_output.positive_response if verify_output.positive_response is not None else 'Success'}\n"
+            )
+            f.write(
+                f"## Negative Check Response:\n{verify_output.negative_response if verify_output.negative_response is not None else 'Success'}\n"
+            )

@@ -1,0 +1,10 @@
+{
+  "goto_subtask_1_object": [1, 1, 1, 0, 0, 0, 0],
+  "interact_subtask_1_object": [1, 1, 0, 0, 0, 1, 0],
+  "goto_subtask_2_object": [1, 1, 1, 0, 0, 0, 0],
+  "interact_subtask_2_object": [1, 1, 0, 1, 0, 0, 0],
+  "goto_subtask_3_object": [1, 1, 1, 0, 0, 0, 0],
+  "interact_subtask_3_object": [1, 1, 0, 0, 0, 1, 0],
+  "goto_subtask_4_object": [1, 1, 1, 0, 0, 0, 0],
+  "interact_subtask_4_object": [1, 1, 1, 0, 0, 0, 0]
+}

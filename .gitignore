@@ -17,3 +17,9 @@ trajs/
 
 # LLM functions
 llm_functions/*/*.md
+
+results*
+*.log
+*.out
+plots/
+.env
