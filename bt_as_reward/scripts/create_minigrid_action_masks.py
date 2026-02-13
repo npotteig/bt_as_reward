@@ -9,6 +9,7 @@ from bt_as_reward.utils import (
     minigrid_create_distance_function,
     minigrid_object_to_str,
     load_functions_from_file,
+    minigrid_state_mission_to_z3
 )
 
 MINIGRID_NUM_ACTIONS = 7  # Minigrid has 7 discrete actions
@@ -93,7 +94,7 @@ if __name__ == "__main__":
 
     for episode in tqdm(expert_trajs["episodes"]):
         mission_str = episode["states"][0]["mission"]
-        bt = BehaviourTreeReward.create_bt(mission_str=mission_str, bt_config=bt_config)
+        bt = BehaviourTreeReward.create_bt(mission_str=mission_str, bt_config=bt_config, state_mission_to_z3=minigrid_state_mission_to_z3)
         idx = 0
         for state, action in zip(episode["states"][:-1], episode["actions"]):
             reward, _ = bt.step_reward(state["image"], state["mission"])

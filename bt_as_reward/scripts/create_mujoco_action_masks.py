@@ -9,6 +9,7 @@ from bt_as_reward.utils import (
     mujoco_create_distance_function,
     mujoco_object_to_str,
     load_functions_from_file,
+    mujoco_state_mission_to_z3
 )
 
 MUJOCO_NUM_ACTIONS = 8  # MuJoCo Discrete has 8 discrete actions
@@ -112,7 +113,7 @@ if __name__ == "__main__":
 
     for episode in tqdm(expert_trajs["episodes"]):
         mission_str = episode["states"][0]["mission"]
-        bt = BehaviourTreeReward.create_bt(mission_str=mission_str, bt_config=bt_config)
+        bt = BehaviourTreeReward.create_bt(mission_str=mission_str, bt_config=bt_config, state_mission_to_z3=mujoco_state_mission_to_z3)
         idx = 0
         for state, action in zip(episode["states"][:-1], episode["actions"]):
             reward, _ = bt.step_reward(state, state["mission"])
