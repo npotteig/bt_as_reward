@@ -52,7 +52,7 @@ bash bash_scripts/{mission_space}/z3_run_llm_pipeline.sh
 Generates a chat history at `llm_functions/doorkey/z3_doorkey_chat_history.json` and subtask code at `llm_functions/doorkey/z3_doorkey_code.py`. Action masks are generated at `action_masks/doorkey_action_masks_llm.json`. Finally, an executable training script is created to train an agent using the MRBT at `bash_scripts/doorkey/z3_run_llm_minigrid_train.sh`. Run the training script as follows:
 
 ```
-bash bash_scripts/doorkey/run_llm_minigrid_train.sh <reward_mode> <seed> <drop_key> <action_mask_file>
+bash bash_scripts/doorkey/z3_run_llm_minigrid_train.sh <reward_mode> <seed> <drop_key> <action_mask_file>
 ```
 
 Parameter values can be found in `bash_scripts/doorkey/z3_run_exps.sh`.

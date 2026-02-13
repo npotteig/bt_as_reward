@@ -100,7 +100,7 @@ if __name__ == "__main__":
 
     plt.figure(figsize=(5, 5))
     uncertainty_str = "Stochastic" if args.uncertainty == "true" else "Deterministic"
-    plt.title(f"LockedRoom {uncertainty_str}")
+    plt.title(f"PickAndPlace2 {uncertainty_str}")
     plt.xlabel("Step")
     plt.ylabel(f"Success Rate")
     plt.ylim(0, 1.05)

@@ -12,5 +12,5 @@ uv run python bt_as_reward/scripts/z3_full_llm_pipeline.py \
     --verify_env_name "DroneSupplier-v0" \
     --train_num_timesteps 2000000 \
     --train_env_name "DroneSupplier-v0" \
-    --train_max_mission_words 16 \
+    --train_max_mission_words 17 \
     --train_script_file "bash_scripts/dronesupplier/z3_run_llm_minigrid_train.sh"

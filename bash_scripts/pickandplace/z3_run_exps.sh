@@ -5,10 +5,10 @@ do
     bash bash_scripts/pickandplace/z3_train.sh "environment" $seed "false" > environment.log
     bash bash_scripts/pickandplace/z3_train.sh "proc_as_reward" $seed "false" > proc_as_reward.log
     bash bash_scripts/pickandplace/z3_train.sh "bt_as_reward" $seed "false" > bt_as_reward.log
-    # bash bash_scripts/pickandplace/z3_train.sh "bt_as_reward" $seed "false" "action_masks/pickandplace_action_masks_llm.json" > bt_as_reward_mask.log
+    bash bash_scripts/pickandplace/z3_train.sh "bt_as_reward" $seed "false" "action_masks/pickandplace_action_masks_llm.json" > bt_as_reward_mask.log
 
     bash bash_scripts/pickandplace/z3_train.sh "environment" $seed "true" > environment.log
     bash bash_scripts/pickandplace/z3_train.sh "proc_as_reward" $seed "true" > proc_as_reward.log
     bash bash_scripts/pickandplace/z3_train.sh "bt_as_reward" $seed "true" > bt_as_reward.log
-    # bash bash_scripts/pickandplace/z3_train.sh "bt_as_reward" $seed "true" "action_masks/pickandplace_action_masks_llm.json" > bt_as_reward_mask.log
+    bash bash_scripts/pickandplace/z3_train.sh "bt_as_reward" $seed "true" "action_masks/pickandplace_action_masks_llm.json" > bt_as_reward_mask.log
 done

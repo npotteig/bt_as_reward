@@ -16,7 +16,7 @@ uv run bt_as_reward/training/minigrid_train.py \
     --reward_mode "$reward_mode" \
     --env_name "DroneSupplier-v0" \
     --drop_key $dropkey \
-    --max_mission_words 16 \
+    --max_mission_words 17 \
     --object_function_file "llm_functions/dronesupplier/z3_subtask_functions_gpt5.py" \
     --object_function_names "subtask_1_object, subtask_2_object, subtask_3_object" \
     --subtask_function_file "llm_functions/dronesupplier/z3_subtask_functions_gpt5.py" \

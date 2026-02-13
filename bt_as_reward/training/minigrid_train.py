@@ -168,7 +168,6 @@ if __name__ == "__main__":
         create_distance_function=minigrid_create_distance_function,
         distance_threshold=args.distance_threshold,
         use_memory=False if args.reward_mode == "bt_as_reward" else True,
-        state_mission_to_z3=minigrid_state_mission_to_z3 if args.use_z3 else None,
     )
     if "DoorKey-16x16" in args.env_name:
         env = gym.make(args.env_name, max_episode_steps=500)
@@ -181,6 +180,7 @@ if __name__ == "__main__":
         mode=args.reward_mode,
         action_mask_dict=action_mask_dict if args.action_mask_file != "none" else None,
         bt_config=bt_config,
+        state_mission_to_z3=minigrid_state_mission_to_z3 if args.use_z3 else None,
     )
     env = DictObservationSpaceWrapper(env, max_words_in_mission=args.max_mission_words)
     env.reset(seed=args.seed)
