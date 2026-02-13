@@ -13,7 +13,7 @@ pip install uv && uv sync
 - MiniGrid
 - MuJoCo Fetch
 
-## Mission Spaces
+## Task Spaces
 
 - DoorKey: *doorkey*
 - LockedRoom: *lockedroom*
@@ -23,7 +23,7 @@ pip install uv && uv sync
 
 ## Prompts
 
-Prompts are located in `llm_prompts/`. System prompts are found in `llm_prompts/minigrid` and `llm_prompts/mujoco` under the name of the mission space (e.g. `llm_prompts/minigrid/z3_doorkey.md`). Prompts for each environment are found at `llm_prompts/minigrid/prompts.md` and `llm_prompts/mujoco/prompts.md`. The only difference between the two prompts files is the parameter types for the subtask function prototypes.
+Prompts are located in `llm_prompts/`. System prompts are found in `llm_prompts/minigrid` and `llm_prompts/mujoco` under the name of the task space (e.g. `llm_prompts/minigrid/z3_doorkey.md`). Prompts for each environment are found at `llm_prompts/minigrid/prompts.md` and `llm_prompts/mujoco/prompts.md`. The only difference between the two prompts files is the parameter types for the subtask function prototypes.
 
 ## Repeatability
 
@@ -46,7 +46,7 @@ export AMPLIFY_API_KEY=<AMPLIFY_KEY>
 **Run the full pipeline**
 ```bash
 bash bash_scripts/doorkey/z3_run_llm_pipeline.sh
-bash bash_scripts/{mission_space}/z3_run_llm_pipeline.sh
+bash bash_scripts/{task_space}/z3_run_llm_pipeline.sh
 ```
 
 Generates a chat history at `llm_functions/doorkey/z3_doorkey_chat_history.json` and subtask code at `llm_functions/doorkey/z3_doorkey_code.py`. Action masks are generated at `action_masks/doorkey_action_masks_llm.json`. Finally, an executable training script is created to train an agent using the MRBT at `bash_scripts/doorkey/z3_run_llm_minigrid_train.sh`. Run the training script as follows:
@@ -108,7 +108,7 @@ bash bash_scripts/lockedroom/failure_z3_verify_bt_composition.sh
 **Generate Expert and Random Trajectories**
 ```bash
 bash bash_scripts/doorkey/create_trajs.sh
-bash bash_scripts/{mission_space}/create_trajs.sh
+bash bash_scripts/{task_space}/create_trajs.sh
 ```
 
 You can use the trajectories for testing the specs above by including an extra argument
@@ -137,7 +137,7 @@ bash bash_scripts/plot_tensorboard.sh {env_name} {is_stochastic}
 ### F4: Policy Transfer to Microsoft AirSim
 Evaluation of policy learned in DroneSupplier deployed to Microsoft AirSim neighborhood environment. Results discussed in Section 6.6.2. Appropriate hardware and GPU needed to run this experiment. A policy must have been learned already in DroneSupplier for this experiment to work.
 
-Map of DroneSupplier mission in `figs/`. Walls (excluding the border) are obstacles in a 25 X 25 section in the neighborhood. 
+Map of DroneSupplier task in `figs/`. Walls (excluding the border) are obstacles in a 25 X 25 section in the neighborhood. 
 
 **Download AirSimNH**
 
